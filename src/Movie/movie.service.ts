@@ -3,16 +3,23 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { plainToInstance } from 'class-transformer';
 import { firstValueFrom } from "rxjs";
 import { CreateMovieDto } from "./dtos/create-movie.dto";
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class MovieService {
-    
+    [x: string]: any;
+
     private readonly omdbApiUrl = 'http://www.omdbapi.com/';
-    private readonly apiKey = 'd165f65e';
+    private readonly apiKey = process.env.OMDB_API_KEY;
+    constructor(
+        private readonly httpService: HttpService,
 
-    constructor(private readonly httpService: HttpService) {}
+    ) {}
 
-    async getMovie(movie: string): Promise<CreateMovieDto> {
+    async getMovie(movie: string) {
         try {
             const { data } = await firstValueFrom(
                 this.httpService.get(`${this.omdbApiUrl}?t=${movie}&apikey=${this.apiKey}`)
@@ -35,11 +42,14 @@ export class MovieService {
                 language: data.Language,
                 country: data.Country,
             });
+           
+            return movieDto
 
-            return movieDto;
         } catch (error) {
- 
+            
+            console.log(error)
             throw new InternalServerErrorException('Error fetching movie data');
+            
         }
     }
 }

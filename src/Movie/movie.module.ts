@@ -2,11 +2,13 @@ import { Module } from "@nestjs/common";
 import { MovieService } from "./movie.service";
 import { MovieController } from "./movie.controller";
 import { HttpModule, HttpService } from "@nestjs/axios";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
-    imports:[ HttpModule],
+    imports:[
+        HttpModule],
     controllers:[MovieController],
-    providers:[MovieService],
+    providers:[MovieService, ],
     exports:[MovieService]
     
 })
