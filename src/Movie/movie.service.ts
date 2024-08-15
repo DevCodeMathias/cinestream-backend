@@ -10,13 +10,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class MovieService {
-    [x: string]: any;
 
     private readonly omdbApiUrl = 'http://www.omdbapi.com/';
     private readonly apiKey = process.env.OMDB_API_KEY;
+    
     constructor(
         private readonly httpService: HttpService,
-
     ) {}
 
     async getMovie(movie: string) {
