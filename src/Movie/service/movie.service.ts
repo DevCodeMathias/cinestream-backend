@@ -11,6 +11,7 @@ import { CreateMovieDto } from "../dtos/create-movie.dto";
 import { Repository } from "typeorm";
 
 import { Movie } from "../entity/movie.entity";
+import { movieRepository } from "../repository/movie.repository";
 
 @Injectable()
 export class MovieService {
@@ -19,8 +20,8 @@ export class MovieService {
     private readonly apiKey = process.env.OMDB_API_KEY;
     
     constructor(
-        @InjectRepository(Movie)
-        private Repositoy:Repository<Movie> , 
+        
+        private readonly Repository: movieRepository, 
         private readonly httpService: HttpService,
     ) {}
 
@@ -49,13 +50,9 @@ export class MovieService {
                 country: data.Country,
             });
 
-            //console.log(movie)
+            return await this.Repository.createMovie(movie);
 
-            const dataMovie = await this.Repositoy.create(movie)
             
-            await this.Repositoy.save(dataMovie)
-
-            return movie
 
         } catch (error) {
             
