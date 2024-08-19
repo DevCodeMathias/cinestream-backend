@@ -13,9 +13,6 @@ export class Movie {
   year: string;
 
   @Column()
-  rated: string;
-
-  @Column()
   released: string;
 
   @Column()

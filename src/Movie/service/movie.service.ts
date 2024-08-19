@@ -2,11 +2,15 @@ import { HttpService } from "@nestjs/axios";
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { plainToInstance } from 'class-transformer';
 import { firstValueFrom } from "rxjs";
-import { CreateMovieDto } from "./dtos/create-movie.dto";
+
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { InjectRepository } from "@nestjs/typeorm";
+import { CreateMovieDto } from "../dtos/create-movie.dto";
+import { Repository } from "typeorm";
+
+import { Movie } from "../entity/movie.entity";
 
 @Injectable()
 export class MovieService {
@@ -15,20 +19,23 @@ export class MovieService {
     private readonly apiKey = process.env.OMDB_API_KEY;
     
     constructor(
+        @InjectRepository(Movie)
+        private Repositoy:Repository<Movie> , 
         private readonly httpService: HttpService,
     ) {}
 
-    async getMovie(movie: string) {
+    async getMovie(title: CreateMovieDto ): Promise<Movie>{
         try {
             const { data } = await firstValueFrom(
-                this.httpService.get(`${this.omdbApiUrl}?t=${movie}&apikey=${this.apiKey}`)
+                this.httpService.get(`${this.omdbApiUrl}?t=${title}&apikey=${this.apiKey}`)
             );
 
             if (!data || data.Response === 'False') {
                 throw new InternalServerErrorException('Movie not found');
             }
 
-            const movieDto = plainToInstance(CreateMovieDto, {
+            
+            const movie = plainToInstance(Movie, {
                 title: data.Title,
                 year: data.Year,
                 released: data.Released,
@@ -41,8 +48,14 @@ export class MovieService {
                 language: data.Language,
                 country: data.Country,
             });
-           
-            return movieDto
+
+            //console.log(movie)
+
+            const dataMovie = await this.Repositoy.create(movie)
+            
+            await this.Repositoy.save(dataMovie)
+
+            return movie
 
         } catch (error) {
             
