@@ -7,8 +7,9 @@ export class MovieController{
 constructor(private readonly movieService: MovieService){}
 
     @Post()
-    async getMovie(@Body('title') title: CreateMovieDto){
-        const result = await this.movieService.getMovie(title)
+    async getMovie(@Body() createMovie: CreateMovieDto){
+   
+        const result = await this.movieService.getMovie(createMovie.title);
         return result;
     }
 }

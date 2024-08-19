@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { plainToInstance } from 'class-transformer';
 import { firstValueFrom } from "rxjs";
 
@@ -25,17 +25,16 @@ export class MovieService {
         private readonly httpService: HttpService,
     ) {}
 
-    async getMovie(title: CreateMovieDto ): Promise<Movie>{
+    async getMovie(title: string ): Promise<Movie>{
         try {
             const { data } = await firstValueFrom(
                 this.httpService.get(`${this.omdbApiUrl}?t=${title}&apikey=${this.apiKey}`)
             );
 
             if (!data || data.Response === 'False') {
-                throw new InternalServerErrorException('Movie not found');
+                throw new NotFoundException('Movie not found');
             }
 
-            
             const movie = plainToInstance(Movie, {
                 title: data.Title,
                 year: data.Year,
@@ -49,16 +48,13 @@ export class MovieService {
                 language: data.Language,
                 country: data.Country,
             });
-
             return await this.Repository.createMovie(movie);
 
-            
-
         } catch (error) {
-            
-            console.log(error)
+            if (error instanceof NotFoundException) {
+                throw error; 
+            }
             throw new InternalServerErrorException('Error fetching movie data');
-            
         }
     }
 }
