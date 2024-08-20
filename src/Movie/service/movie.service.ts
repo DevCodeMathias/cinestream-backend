@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { plainToInstance } from 'class-transformer';
 import { firstValueFrom } from "rxjs";
 
@@ -35,6 +35,13 @@ export class MovieService {
                 throw new NotFoundException('Movie not found');
             }
 
+            
+             
+            const movieExists = await this.checkIfMovieAlreadyExists(title);
+            if (movieExists) {
+                throw new BadRequestException('Movie already exists in the database');
+            }
+
             const movie = plainToInstance(Movie, {
                 title: data.Title,
                 year: data.Year,
@@ -54,7 +61,27 @@ export class MovieService {
             if (error instanceof NotFoundException) {
                 throw error; 
             }
+
+            if(error instanceof BadRequestException){
+                throw error;
+            }
+
             throw new InternalServerErrorException('Error fetching movie data');
         }
+    }
+
+
+    async showAll(){
+        try{
+          return this.Repository.GetAll();  
+        }catch(error){
+            throw new InternalServerErrorException('Error fetching movie data');
+        }
+        
+    }
+
+    private async checkIfMovieAlreadyExists(title:string){
+        return await this.Repository.IsMovieInDatabase(title)
+
     }
 }
