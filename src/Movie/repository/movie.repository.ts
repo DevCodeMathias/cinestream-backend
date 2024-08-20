@@ -30,7 +30,10 @@ export class movieRepository{
         })
 
         return Movie != null
+    }
 
-        
+    //verificar isso 
+    async DeleteMovie(id:number):Promise<void>{
+        await this.repository.delete(id)
     }
 }

@@ -80,6 +80,20 @@ export class MovieService {
         
     }
 
+
+    async DeletMovie(id:number){
+        try{
+            if (!id) {
+                throw new Error('ID is required');
+              }
+
+            await this.Repository.DeleteMovie(id);
+        }catch(error){
+            console.log(error)
+            throw new InternalServerErrorException('Error fetching movie data');
+        }
+    }
+
     private async checkIfMovieAlreadyExists(title:string){
         return await this.Repository.IsMovieInDatabase(title)
 

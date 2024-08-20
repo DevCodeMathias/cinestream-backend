@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from "@nestjs/common";
 import { MovieService } from "../service/movie.service";
 import { CreateMovieDto } from "../dtos/create-movie.dto";
 
@@ -18,7 +18,10 @@ constructor(private readonly movieService: MovieService){}
         return await this.movieService.showAll();
     }
 
+    @Delete("/:id")
+    async DeletFromCatalog(@Param("id", ParseIntPipe) id: number){
     
-    
+        return await this.movieService.DeletMovie(id)
+    }
 
 }
