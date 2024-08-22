@@ -35,8 +35,7 @@ export class MovieService {
                 throw new NotFoundException('Movie not found');
             }
 
-            
-             
+            // se ele existir é nao 
             const movieExists = await this.checkIfMovieAlreadyExists(title);
             if (movieExists) {
                 throw new BadRequestException('Movie already exists in the database');

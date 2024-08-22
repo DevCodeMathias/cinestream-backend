@@ -23,16 +23,13 @@ export class movieRepository{
     }
 
     async IsMovieInDatabase(title:string):Promise<boolean>{
-        const Movie = await this.repository.find({
-            where:{
-                title:title
-            }
-        })
-
-        return Movie != null
+        const movie = await this.repository.findOne({
+            where: { title: title }
+        });
+    
+       return movie != null
     }
 
-    //verificar isso 
     async DeleteMovie(id:number):Promise<void>{
         await this.repository.delete(id)
     }

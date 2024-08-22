@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { IsString, IsNotEmpty } from 'class-validator';
 
 @Entity('movies') 
@@ -6,7 +6,7 @@ export class Movie {
   @PrimaryGeneratedColumn()
   id: number; 
 
-  @Column()
+  @Column({unique:true})
   title: string;
 
   @Column()
