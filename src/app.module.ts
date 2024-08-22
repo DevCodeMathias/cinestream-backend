@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MovieModule } from './Movie/movie.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Movie } from './Movie/entity/movie.entity';
+import { ProfessioanlModule } from './Profissionals/professional.module';
 
 
 @Module({
@@ -17,7 +18,8 @@ import { Movie } from './Movie/entity/movie.entity';
       synchronize: true,
     }),
     TypeOrmModule.forFeature([Movie]),
-    MovieModule],
+    MovieModule,
+    ProfessioanlModule],
   controllers: [],
   providers: [],
 })

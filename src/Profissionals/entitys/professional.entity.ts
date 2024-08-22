@@ -20,6 +20,5 @@ export class Professional {
     @Column()
     department: string;
   
-    @Column({ type: 'date' })
-    dateOfBirth: Date;
+
 }
